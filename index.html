@@ -185,13 +185,6 @@
       border-radius: 0.75rem;
       padding: 1rem;
     }
-
-    /* Style cho các ô thông số giống hashtag trong ảnh */
-    .stat-box {
-      background: #faeed6;
-      border-radius: 2rem;
-      padding: 0.5rem;
-    }
   </style>
 </head>
 
@@ -272,21 +265,6 @@
           <div class="log-area">
             <div id="logArea" class="space-y-1"></div>
           </div>
-
-          <div class="grid grid-cols-3 gap-3 text-center mt-4">
-            <div class="stat-box">
-              <p class="font-bold text-lg" style="color: #f06b18;">0</p>
-              <p class="text-xs uppercase tracking-wide font-semibold" style="color: #f06b18;">Thư Mục</p>
-            </div>
-            <div class="stat-box">
-              <p class="font-bold text-lg" style="color: #f06b18;">0</p>
-              <p class="text-xs uppercase tracking-wide font-semibold" style="color: #f06b18;">Tệp</p>
-            </div>
-            <div class="stat-box">
-              <p class="font-bold text-lg" style="color: #f06b18;">0</p>
-              <p class="text-xs uppercase tracking-wide font-semibold" style="color: #f06b18;">Thành Công</p>
-            </div>
-          </div>
         </div>
 
       </div>
@@ -316,7 +294,7 @@
     function clearStateUI() {
       clearState();
       document.getElementById('resumeBanner').classList.add('hidden');
-      document.getElementById('processingArea').classList.remove('hidden');
+      document.getElementById('processingArea').classList.add('hidden');
       addLog("Quá trình trước đã bị hủy bỏ.", "info");
     }
 
@@ -353,6 +331,7 @@
 
     function addLog(msg, type = "info") {
       const area = document.getElementById('logArea');
+      if (!area) return;
       const div = document.createElement('div');
 
       const time = new Date().toLocaleTimeString('vi-VN');
@@ -373,11 +352,7 @@
     }
 
     function updateStats() {
-      if (!copyState) return;
-      const statElements = Array.from(document.querySelectorAll('.stat-box'));
-      if (statElements[0]) statElements[0].querySelector('p').innerText = copyState.foldersProcessed || 0;
-      if (statElements[1]) statElements[1].querySelector('p').innerText = copyState.filesToCopy?.length || 0;
-      if (statElements[2]) statElements[2].querySelector('p').innerText = copyState.copiedFiles || 0;
+      // Đã loại bỏ các ô thống kê khỏi HTML nên hàm này không thực thi thao tác giao diện
     }
 
     function uiSetInProgress(inProgress) {
@@ -440,12 +415,10 @@
         let sourceInfo = await runServer('getFolderContentsInfo', sourceId);
         if (!sourceInfo.success) throw new Error(sourceInfo.error);
 
-        let rootTargetId = destParentId; // Mặc định là null nếu không điền
+        let rootTargetId = destParentId;
 
-        // Xử lý nhánh tách biệt: Tệp vs Thư mục
         if (sourceInfo.isFile) {
           addLog(`Nhận diện TỆP: "${sourceInfo.name}". Đang chuẩn bị sao chép trực tiếp...`, "info");
-          // Giữ nguyên rootTargetId = destParentId. Backend sẽ tự động xử lý null thành My Drive.
         } else {
           addLog(`Tìm thấy THƯ MỤC: "${sourceInfo.name}". Đang tạo cấu trúc đích...`, "info");
           let rootTarget = await runServer('createTargetFolder', sourceInfo.name, destParentId);
