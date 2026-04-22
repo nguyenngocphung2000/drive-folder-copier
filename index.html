@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111625">
   <title>Sao Chép Thư Mục Drive</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -14,10 +15,11 @@
     }
 
     body {
-      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+      background: #111625; /* Đổi sang nền tối đặc trưng của ảnh */
       color: #f8fafc;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
+      min-height: -webkit-fill-available;
       overflow-x: hidden;
     }
 
@@ -34,60 +36,19 @@
 
     .infinity-circle {
       position: absolute;
-      border: 1px solid rgba(255, 159, 67, 0.15);
+      border: 1px solid rgba(240, 107, 24, 0.15);
       border-radius: 50%;
       animation: infinityRotate 20s linear infinite;
     }
 
-    .infinity-circle:nth-child(1) {
-      width: 400px;
-      height: 400px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation-duration: 20s;
-      border-color: rgba(255, 159, 67, 0.2);
-    }
-
-    .infinity-circle:nth-child(2) {
-      width: 600px;
-      height: 600px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation-duration: 25s;
-      animation-direction: reverse;
-      border-color: rgba(0, 255, 255, 0.15);
-    }
-
-    .infinity-circle:nth-child(3) {
-      width: 800px;
-      height: 800px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation-duration: 30s;
-      border-color: rgba(255, 0, 255, 0.1);
-    }
-
-    .infinity-circle:nth-child(4) {
-      width: 1000px;
-      height: 1000px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation-duration: 35s;
-      animation-direction: reverse;
-      border-color: rgba(255, 159, 67, 0.1);
-    }
+    .infinity-circle:nth-child(1) { width: 400px; height: 400px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-duration: 20s; border-color: rgba(240, 107, 24, 0.2); }
+    .infinity-circle:nth-child(2) { width: 600px; height: 600px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-duration: 25s; animation-direction: reverse; border-color: rgba(0, 255, 255, 0.15); }
+    .infinity-circle:nth-child(3) { width: 800px; height: 800px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-duration: 30s; border-color: rgba(255, 0, 255, 0.1); }
+    .infinity-circle:nth-child(4) { width: 1000px; height: 1000px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-duration: 35s; animation-direction: reverse; border-color: rgba(240, 107, 24, 0.1); }
 
     @keyframes infinityRotate {
-      from {
-        transform: translate(-50%, -50%) rotate(0deg);
-      }
-      to {
-        transform: translate(-50%, -50%) rotate(360deg);
-      }
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
     /* Glassmorphism Panel */
@@ -95,12 +56,8 @@
       background: rgba(15, 23, 42, 0.4);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1.5px solid;
-      border-image: linear-gradient(135deg, rgba(255, 159, 67, 0.5), rgba(0, 255, 255, 0.3)) 1;
-      box-shadow: 
-        0 0 40px rgba(255, 159, 67, 0.1),
-        inset 0 0 40px rgba(255, 159, 67, 0.05),
-        0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      border: 1.5px solid #f06b18; /* Viền cam đơn sắc giống ảnh */
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
       position: relative;
       overflow: hidden;
     }
@@ -112,72 +69,50 @@
       right: -50%;
       width: 200%;
       height: 200%;
-      background: linear-gradient(45deg, transparent 30%, rgba(255, 159, 67, 0.05) 50%, transparent 70%);
+      background: linear-gradient(45deg, transparent 30%, rgba(240, 107, 24, 0.05) 50%, transparent 70%);
       animation: shimmer 3s infinite;
     }
 
     @keyframes shimmer {
-      0% {
-        transform: translate(-100%, -100%) rotate(45deg);
-      }
-      100% {
-        transform: translate(100%, 100%) rotate(45deg);
-      }
+      0% { transform: translate(-100%, -100%) rotate(45deg); }
+      100% { transform: translate(100%, 100%) rotate(45deg); }
     }
 
     /* Input Fields */
     .input-field {
       background: rgba(26, 31, 58, 0.6);
-      border: 1.5px solid rgba(255, 159, 67, 0.3);
+      border: 1.5px solid rgba(240, 107, 24, 0.3);
       color: #f8fafc;
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
     }
 
-    .input-field::placeholder {
-      color: rgba(148, 163, 184, 0.6);
-    }
+    .input-field::placeholder { color: rgba(148, 163, 184, 0.6); }
 
     .input-field:focus {
       background: rgba(26, 31, 58, 0.8);
-      border-color: #ff9f43;
-      box-shadow: 
-        0 0 0 3px rgba(255, 159, 67, 0.2),
-        inset 0 0 20px rgba(255, 159, 67, 0.1);
+      border-color: #f06b18;
+      box-shadow: 0 0 0 3px rgba(240, 107, 24, 0.2);
       outline: none;
     }
 
     /* Neon Glow Effects */
     .neon-glow-orange {
-      text-shadow: 
-        0 0 10px rgba(255, 159, 67, 0.5),
-        0 0 20px rgba(255, 159, 67, 0.3);
-    }
-
-    .neon-glow-cyan {
-      text-shadow: 
-        0 0 10px rgba(0, 255, 255, 0.5),
-        0 0 20px rgba(0, 255, 255, 0.3);
-    }
-
-    .neon-glow-magenta {
-      text-shadow: 
-        0 0 10px rgba(255, 0, 255, 0.5),
-        0 0 20px rgba(255, 0, 255, 0.3);
+      text-shadow: 0 0 10px rgba(240, 107, 24, 0.5);
     }
 
     /* Buttons */
     .btn-primary {
-      background: linear-gradient(135deg, #ff9f43 0%, #ffa500 100%);
-      color: #0a0e27;
+      background: #f06b18; /* Đổi thành màu cam thuần */
+      color: #ffffff;
       border: none;
       font-weight: 700;
       letter-spacing: 0.5px;
       position: relative;
       overflow: hidden;
       transition: all 0.3s ease;
-      box-shadow: 0 0 20px rgba(255, 159, 67, 0.4);
+      box-shadow: 0 0 15px rgba(240, 107, 24, 0.3);
     }
 
     .btn-primary::before {
@@ -187,69 +122,34 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
       transition: left 0.5s ease;
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(255, 159, 67, 0.6);
+      box-shadow: 0 0 20px rgba(240, 107, 24, 0.5);
     }
 
-    .btn-primary:hover::before {
-      left: 100%;
-    }
+    .btn-primary:hover::before { left: 100%; }
 
     .btn-secondary {
-      background: rgba(0, 255, 255, 0.1);
-      border: 1.5px solid rgba(0, 255, 255, 0.5);
-      color: #00ffff;
+      background: transparent;
+      border: 1.5px solid #f06b18;
+      color: #f06b18;
       font-weight: 600;
       transition: all 0.3s ease;
     }
 
     .btn-secondary:hover {
-      background: rgba(0, 255, 255, 0.2);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-    }
-
-    /* Progress Bar */
-    .progress-bar-wrap {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 999px;
-      overflow: hidden;
-      height: 4px;
-      border: 1px solid rgba(255, 159, 67, 0.2);
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #ff9f43, #ffa500, #00ffff);
-      width: 0%;
-      transition: width 0.4s ease;
-      box-shadow: 0 0 20px rgba(255, 159, 67, 0.6);
+      background: rgba(240, 107, 24, 0.1);
     }
 
     /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(255, 159, 67, 0.05);
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, #ff9f43, #00ffff);
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 159, 67, 0.4);
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(180deg, #ffa500, #00ffff);
-    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(240, 107, 24, 0.05); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #f06b18; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #d95a11; }
 
     /* Label */
     .label-glass {
@@ -263,7 +163,7 @@
     /* Log Area */
     .log-area {
       background: rgba(10, 14, 39, 0.7);
-      border: 1px solid rgba(255, 159, 67, 0.2);
+      border: 1px solid rgba(240, 107, 24, 0.2);
       border-radius: 0.5rem;
       padding: 0.75rem;
       max-height: 200px;
@@ -273,39 +173,30 @@
       color: rgba(148, 163, 184, 0.8);
     }
 
-    .log-item {
-      margin: 2px 0;
-      padding: 2px 0;
-    }
-
-    .log-info {
-      color: rgba(148, 163, 184, 0.8);
-    }
-
-    .log-error {
-      color: #ff6b6b;
-      text-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
-    }
-
-    .log-success {
-      color: #51cf66;
-      text-shadow: 0 0 8px rgba(81, 207, 102, 0.3);
-    }
+    .log-item { margin: 2px 0; padding: 2px 0; }
+    .log-info { color: rgba(148, 163, 184, 0.8); }
+    .log-error { color: #ff6b6b; }
+    .log-success { color: #f06b18; }
 
     /* Resume Banner */
     .resume-banner {
-      background: rgba(255, 159, 67, 0.15);
-      border: 1.5px solid rgba(255, 159, 67, 0.5);
+      background: rgba(240, 107, 24, 0.1);
+      border: 1.5px solid #f06b18;
       border-radius: 0.75rem;
       padding: 1rem;
-      box-shadow: inset 0 0 20px rgba(255, 159, 67, 0.1);
+    }
+
+    /* Style cho các ô thông số giống hashtag trong ảnh */
+    .stat-box {
+      background: #faeed6;
+      border-radius: 2rem;
+      padding: 0.5rem;
     }
   </style>
 </head>
 
 <body class="flex items-center justify-center p-4 md:p-6">
   
-  <!-- Infinity Architecture Background -->
   <div class="infinity-bg">
     <div class="infinity-circle"></div>
     <div class="infinity-circle"></div>
@@ -313,30 +204,25 @@
     <div class="infinity-circle"></div>
   </div>
 
-  <!-- Main Container -->
   <div class="w-full max-w-2xl relative z-10">
-    <!-- Header Card -->
     <div class="glass-panel p-8 rounded-3xl mb-6 text-center relative z-20">
-      <h1 class="text-4xl md:text-5xl font-extrabold mb-2 neon-glow-orange" style="color: #ff9f43;">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-2 neon-glow-orange" style="color: #f06b18;">
         ∞ DRIVE COPIER
       </h1>
-      <div class="h-1 w-24 mx-auto bg-gradient-to-r from-orange-500 via-cyan-400 to-orange-500 rounded-full mb-4" style="box-shadow: 0 0 20px rgba(255, 159, 67, 0.5);"></div>
+      <div class="h-1 w-24 mx-auto bg-gradient-to-r from-orange-500 via-orange-300 to-orange-500 rounded-full mb-4"></div>
       <p class="text-slate-300 text-sm md:text-base">
         Nhân bản toàn bộ thư mục Google Drive một cách linh hoạt, không bị giới hạn thời gian.
       </p>
     </div>
 
-    <!-- Main Glass Panel -->
     <div class="glass-panel p-8 md:p-10 rounded-3xl relative z-20 backdrop-blur-xl">
       <div class="relative z-10">
         
-        <!-- Form Section -->
         <div class="space-y-6">
           
-          <!-- Source URL Input -->
           <div class="group">
             <label class="label-glass block mb-3 flex items-center">
-              <span class="neon-glow-orange" style="color: #ff9f43;">↓</span>
+              <span class="neon-glow-orange" style="color: #f06b18;">↓</span>
               <span class="ml-2">Liên Kết Thư Mục Nguồn <span class="text-red-500">*</span></span>
             </label>
             <input type="text" id="sourceUrl"
@@ -346,10 +232,9 @@
             <p class="text-xs text-slate-500 mt-2 ml-1">Đây là thư mục bạn muốn sao chép</p>
           </div>
 
-          <!-- Destination URL Input -->
           <div class="group">
             <label class="label-glass block mb-3 flex items-center">
-              <span class="neon-glow-cyan" style="color: #00ffff;">↑</span>
+              <span style="color: #f06b18;">↑</span>
               <span class="ml-2">Liên Kết Đích Đến (Tùy Chọn)</span>
             </label>
             <input type="text" id="destUrl"
@@ -359,7 +244,6 @@
             <p class="text-xs text-slate-500 mt-2 ml-1">Thư mục sẽ được tạo tại vị trí này</p>
           </div>
 
-          <!-- Resume Banner -->
           <div id="resumeBanner" class="hidden resume-banner">
             <p class="text-amber-200 text-sm font-medium mb-3">Phát hiện quá trình nhân bản chưa hoàn thành</p>
             <div class="flex flex-col sm:flex-row gap-3">
@@ -372,49 +256,35 @@
             </div>
           </div>
 
-          <!-- Start Button -->
           <button id="startBtn" onclick="startCopy()"
             class="btn-primary w-full py-4 px-6 rounded-xl text-white font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 relative group"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
-            </svg>
             <span>Bắt Đầu Nhân Bản</span>
           </button>
         </div>
 
-        <!-- Processing Area -->
         <div id="processingArea" class="mt-8 hidden space-y-4 border-t border-orange-500/20 pt-6 relative z-10">
           
-          <!-- Status Header -->
-          <div class="flex justify-between items-center">
-            <span id="statusText" class="text-cyan-300 font-semibold text-sm">Đang khởi tạo...</span>
-            <span id="progressText" class="text-orange-400 font-bold text-lg">0%</span>
+          <div class="flex justify-between items-center mb-2">
+            <span id="statusText" style="color: #f06b18;" class="font-semibold text-sm">Đang khởi tạo...</span>
           </div>
 
-          <!-- Animated Progress Bar -->
-          <div class="progress-bar-wrap">
-            <div id="progressBar" class="progress-bar-fill"></div>
-          </div>
-
-          <!-- Log Area -->
           <div class="log-area">
             <div id="logArea" class="space-y-1"></div>
           </div>
 
-          <!-- Stats Row -->
-          <div class="grid grid-cols-3 gap-3 text-center">
-            <div class="glass-panel p-3 rounded-lg">
-              <p class="text-orange-400 font-bold text-lg">0</p>
-              <p class="text-slate-400 text-xs uppercase tracking-wide">Thư Mục</p>
+          <div class="grid grid-cols-3 gap-3 text-center mt-4">
+            <div class="stat-box">
+              <p class="font-bold text-lg" style="color: #f06b18;">0</p>
+              <p class="text-xs uppercase tracking-wide font-semibold" style="color: #f06b18;">Thư Mục</p>
             </div>
-            <div class="glass-panel p-3 rounded-lg">
-              <p class="text-cyan-400 font-bold text-lg">0</p>
-              <p class="text-slate-400 text-xs uppercase tracking-wide">Tệp</p>
+            <div class="stat-box">
+              <p class="font-bold text-lg" style="color: #f06b18;">0</p>
+              <p class="text-xs uppercase tracking-wide font-semibold" style="color: #f06b18;">Tệp</p>
             </div>
-            <div class="glass-panel p-3 rounded-lg">
-              <p class="text-green-400 font-bold text-lg">0</p>
-              <p class="text-slate-400 text-xs uppercase tracking-wide">Thành Công</p>
+            <div class="stat-box">
+              <p class="font-bold text-lg" style="color: #f06b18;">0</p>
+              <p class="text-xs uppercase tracking-wide font-semibold" style="color: #f06b18;">Thành Công</p>
             </div>
           </div>
         </div>
@@ -422,7 +292,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="text-center mt-6 text-slate-500 text-xs">
       <p>Nothing-drive-folder-copier</p>
     </div>
@@ -498,18 +367,14 @@
     }
 
     function updateProgress(percent, text) {
-      document.getElementById('progressBar').style.width = percent + '%';
       if (text) {
         document.getElementById('statusText').innerText = text;
       }
-      document.getElementById('progressText').innerText = Math.round(percent) + '%';
     }
 
     function updateStats() {
       if (!copyState) return;
-      const stats = document.querySelectorAll('.glass-panel p');
-      // Update stats display based on copyState
-      const statElements = Array.from(document.querySelectorAll('.glass-panel')).filter(el => el.parentElement.className.includes('grid'));
+      const statElements = Array.from(document.querySelectorAll('.stat-box'));
       if (statElements[0]) statElements[0].querySelector('p').innerText = copyState.foldersProcessed || 0;
       if (statElements[1]) statElements[1].querySelector('p').innerText = copyState.filesToCopy?.length || 0;
       if (statElements[2]) statElements[2].querySelector('p').innerText = copyState.copiedFiles || 0;
@@ -544,7 +409,6 @@
       } catch (err) {
         addLog(`Lỗi Nghiêm Trọng: ${err.message}`, "error");
         updateProgress(100, "Quá trình thất bại.");
-        document.getElementById('progressBar').style.background = "#ff6b6b";
         uiSetInProgress(false);
       }
     }
@@ -605,7 +469,6 @@
       } catch (err) {
         addLog(`Lỗi Nghiêm Trọng: ${err.message}`, "error");
         updateProgress(100, "Quá trình thất bại.");
-        document.getElementById('progressBar').style.background = "#ff6b6b";
         uiSetInProgress(false);
       }
     }
@@ -670,8 +533,7 @@
 
       for (let i = copyState.currentBatchIndex; i < totalFiles; i += CHUNK_SIZE) {
         let chunk = copyState.filesToCopy.slice(i, i + CHUNK_SIZE);
-        let percent = 20 + ((i / totalFiles) * 80);
-        updateProgress(percent, `Sao chép tệp (${i}/${totalFiles})...`);
+        updateProgress(0, `Sao chép tệp (${i}/${totalFiles})...`);
         addLog(`Đang sao chép nhóm ${chunk.length} tệp...`, "info");
 
         let res = await runServer('copyFilesBatch', chunk);
