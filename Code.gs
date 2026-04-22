@@ -5,10 +5,8 @@ function doGet(e) {
       .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
-// Trích xuất ID từ đường dẫn Google Drive
 function extractIdFromUrl(url) {
   if (!url) return null;
-  // Khớp ID Drive tiêu chuẩn
   var idMatch = url.match(/[-\w]{25,}/);
   return idMatch ? idMatch[0] : null;
 }
@@ -17,10 +15,9 @@ function logToSheet(sourceUrl) {
   return false;
 }
 
-// Lấy thông tin nội dung của thư mục
-function getFolderContentsInfo(folderId) {
+function getFolderContentsInfo(id) {
   try {
-    var folder = DriveApp.getFolderById(folderId);
+    var folder = DriveApp.getFolderById(id);
     var files = folder.getFiles();
     var folders = folder.getFolders();
     
@@ -44,11 +41,20 @@ function getFolderContentsInfo(folderId) {
     
     return { success: true, files: fileList, folders: folderList, name: folder.getName() };
   } catch (e) {
-    return { success: false, error: e.toString() };
+    try {
+      var singleFile = DriveApp.getFileById(id);
+      return { 
+        success: true, 
+        files: [{ id: singleFile.getId(), name: singleFile.getName() }], 
+        folders: [], 
+        name: singleFile.getName() 
+      };
+    } catch (err) {
+      return { success: false, error: err.toString() };
+    }
   }
 }
 
-// Tạo thư mục đích
 function createTargetFolder(folderName, destParentId) {
   try {
     var parentFolder;
@@ -64,7 +70,6 @@ function createTargetFolder(folderName, destParentId) {
   }
 }
 
-// Sao chép các tệp theo nhóm
 function copyFilesBatch(batch) {
   var results = [];
   for (var i = 0; i < batch.length; i++) {

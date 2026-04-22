@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#111625">
-  <title>Sao Chép Thư Mục Drive</title>
+  <title>Copy Thư Mục Drive</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * {
@@ -15,7 +15,7 @@
     }
 
     body {
-      background: #111625; /* Đổi sang nền tối đặc trưng của ảnh */
+      background: #111625;
       color: #f8fafc;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
@@ -56,7 +56,7 @@
       background: rgba(15, 23, 42, 0.4);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1.5px solid #f06b18; /* Viền cam đơn sắc giống ảnh */
+      border: 1.5px solid #f06b18;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
       position: relative;
       overflow: hidden;
@@ -104,7 +104,7 @@
 
     /* Buttons */
     .btn-primary {
-      background: #f06b18; /* Đổi thành màu cam thuần */
+      background: #f06b18;
       color: #ffffff;
       border: none;
       font-weight: 700;
@@ -229,7 +229,7 @@
               class="input-field w-full px-5 py-3.5 rounded-xl text-slate-100 placeholder-slate-500 backdrop-blur"
               placeholder="https://drive.google.com/drive/folders/1aBcD..."
             >
-            <p class="text-xs text-slate-500 mt-2 ml-1">Đây là thư mục bạn muốn sao chép</p>
+            <p class="text-xs text-slate-500 mt-2 ml-1">Đây là thư mục (hoặc tệp) bạn muốn sao chép</p>
           </div>
 
           <div class="group">
@@ -241,7 +241,7 @@
               class="input-field w-full px-5 py-3.5 rounded-xl text-slate-100 placeholder-slate-500 backdrop-blur"
               placeholder="Để trống để sao chép vào My Drive"
             >
-            <p class="text-xs text-slate-500 mt-2 ml-1">Thư mục sẽ được tạo tại vị trí này</p>
+            <p class="text-xs text-slate-500 mt-2 ml-1">Dữ liệu sẽ được tạo tại vị trí này</p>
           </div>
 
           <div id="resumeBanner" class="hidden resume-banner">
@@ -424,7 +424,7 @@
 
       const sourceId = extractIdFromUrl(sourceUrl);
       if (!sourceId) {
-        alert("Không thể trích xuất ID Thư Mục từ liên kết nguồn.");
+        alert("Không thể trích xuất ID từ liên kết nguồn.");
         return;
       }
 
@@ -433,19 +433,36 @@
       uiSetInProgress(true);
       document.getElementById('logArea').innerHTML = '';
       
-      addLog("Bắt đầu quá trình. Ghi nhập yêu cầu...", "info");
+      addLog("Bắt đầu quá trình. Ghi nhận yêu cầu...", "info");
       
       try {
-        updateProgress(5, "Phân tích thư mục nguồn...");
+        updateProgress(5, "Phân tích nguồn...");
         let sourceInfo = await runServer('getFolderContentsInfo', sourceId);
         if (!sourceInfo.success) throw new Error(sourceInfo.error);
 
-        addLog(`Tìm thấy thư mục gốc: "${sourceInfo.name}". Đang tạo cấu trúc đích...`, "info");
+        // Mẹo nhận diện tệp đơn lẻ: Không có folder con + Có đúng 1 file + Tên file trùng tên gốc
+        let isSingleFile = (sourceInfo.folders.length === 0 && sourceInfo.files.length === 1 && sourceInfo.name === sourceInfo.files[0].name);
         
-        let rootTarget = await runServer('createTargetFolder', sourceInfo.name, destParentId);
-        if (!rootTarget.success) throw new Error(rootTarget.error);
+        let rootTargetId;
 
-        addLog(`Đã tạo thư mục đích gốc (ID: ${rootTarget.id})`, "success");
+        if (isSingleFile && destParentId) {
+          // Bỏ qua tạo thư mục bọc ngoài nếu đã có thư mục đích
+          addLog(`Nhận diện liên kết TỆP: "${sourceInfo.name}". Bỏ qua tạo thư mục bọc ngoài...`, "info");
+          rootTargetId = destParentId;
+        } else {
+          // Buộc phải tạo thư mục bọc ngoài nếu copy ra thẳng My Drive (do backend cần 1 ID cụ thể)
+          if (isSingleFile && !destParentId) {
+            addLog(`Nhận diện TỆP: "${sourceInfo.name}". Đang tạo thư mục bọc ngoài tại My Drive...`, "info");
+          } else {
+            addLog(`Tìm thấy THƯ MỤC: "${sourceInfo.name}". Đang tạo cấu trúc đích...`, "info");
+          }
+          
+          let rootTarget = await runServer('createTargetFolder', sourceInfo.name, destParentId);
+          if (!rootTarget.success) throw new Error(rootTarget.error);
+          
+          rootTargetId = rootTarget.id;
+          addLog(`Đã tạo cấu trúc đích (ID: ${rootTargetId})`, "success");
+        }
 
         copyState = {
           phase: 'traversing',
@@ -453,7 +470,7 @@
           destUrl: destUrl,
           queue: [{
             sourceId: sourceId,
-            targetId: rootTarget.id,
+            targetId: rootTargetId,
             preFetchedInfo: sourceInfo
           }],
           filesToCopy: [],
@@ -512,7 +529,7 @@
         updateStats();
       }
 
-      addLog(`Hoàn thành duyệt. Tìm thấy ${copyState.filesToCopy.length} tệp để sao chép trên ${copyState.foldersProcessed} thư mục.`, "success");
+      addLog(`Hoàn thành duyệt. Tìm thấy ${copyState.filesToCopy.length} tệp để sao chép.`, "success");
       
       copyState.phase = 'copying';
       saveState();
