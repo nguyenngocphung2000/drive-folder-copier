@@ -351,6 +351,10 @@
       }
     }
 
+    function updateStats() {
+      // Đã loại bỏ các ô thống kê khỏi HTML nên hàm này không thực thi thao tác giao diện
+    }
+
     function uiSetInProgress(inProgress) {
       document.getElementById('startBtn').disabled = inProgress;
       if (inProgress) {
