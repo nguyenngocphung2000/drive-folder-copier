@@ -16,42 +16,57 @@ function logToSheet(sourceUrl) {
 }
 
 function getFolderContentsInfo(id) {
+  var isFolder = false;
+  var isFile = false;
+  var itemObj = null;
+
+  // Bước 1: Thử lấy dữ liệu dưới dạng File để kiểm tra định dạng gốc (MimeType)
   try {
-    var folder = DriveApp.getFolderById(id);
-    var files = folder.getFiles();
-    var folders = folder.getFolders();
+    var file = DriveApp.getFileById(id);
+    var mimeType = file.getMimeType();
     
-    var fileList = [];
-    while (files.hasNext()) {
-      var file = files.next();
-      fileList.push({
-        id: file.getId(),
-        name: file.getName()
-      });
+    // So sánh định dạng xem có đích thị là Thư mục hay không
+    if (mimeType === MimeType.FOLDER || mimeType === 'application/vnd.google-apps.folder') {
+      isFolder = true;
+    } else {
+      isFile = true;
+      itemObj = file;
     }
-    
-    var folderList = [];
-    while (folders.hasNext()) {
-      var subFolder = folders.next();
-      folderList.push({
-        id: subFolder.getId(),
-        name: subFolder.getName()
-      });
-    }
-    
-    // Đánh dấu isFile: false vì đây là thư mục
-    return { success: true, isFile: false, files: fileList, folders: folderList, name: folder.getName() };
   } catch (e) {
+    // Nếu DriveApp.getFileById() ném lỗi, thì ID đó chắc chắn là Thư mục
+    isFolder = true;
+  }
+
+  // Bước 2: Xử lý theo từng nhánh đã phân loại
+  if (isFile) {
+    return { 
+      success: true, 
+      isFile: true,
+      files: [{ id: itemObj.getId(), name: itemObj.getName() }], 
+      folders: [], 
+      name: itemObj.getName() 
+    };
+  }
+
+  if (isFolder) {
     try {
-      var singleFile = DriveApp.getFileById(id);
-      // Đánh dấu isFile: true để frontend dễ nhận diện
-      return { 
-        success: true, 
-        isFile: true,
-        files: [{ id: singleFile.getId(), name: singleFile.getName() }], 
-        folders: [], 
-        name: singleFile.getName() 
-      };
+      var folder = DriveApp.getFolderById(id);
+      var files = folder.getFiles();
+      var folders = folder.getFolders();
+      
+      var fileList = [];
+      while (files.hasNext()) {
+        var f = files.next();
+        fileList.push({ id: f.getId(), name: f.getName() });
+      }
+      
+      var folderList = [];
+      while (folders.hasNext()) {
+        var subFolder = folders.next();
+        folderList.push({ id: subFolder.getId(), name: subFolder.getName() });
+      }
+      
+      return { success: true, isFile: false, files: fileList, folders: folderList, name: folder.getName() };
     } catch (err) {
       return { success: false, error: err.toString() };
     }
@@ -74,7 +89,6 @@ function copyFilesBatch(batch) {
     try {
       var item = batch[i];
       var file = DriveApp.getFileById(item.fileId);
-      // Nếu targetFolderId bị trống (null), tự động copy thẳng ra My Drive
       var destFolder = item.targetFolderId ? DriveApp.getFolderById(item.targetFolderId) : DriveApp.getRootFolder();
       file.makeCopy(file.getName(), destFolder);
       results.push({ fileId: item.fileId, success: true });
