@@ -20,12 +20,10 @@ function getFolderContentsInfo(id) {
   var isFile = false;
   var itemObj = null;
 
-  // Bước 1: Thử lấy dữ liệu dưới dạng File để kiểm tra định dạng gốc (MimeType)
   try {
     var file = DriveApp.getFileById(id);
     var mimeType = file.getMimeType();
-    
-    // So sánh định dạng xem có đích thị là Thư mục hay không
+  
     if (mimeType === MimeType.FOLDER || mimeType === 'application/vnd.google-apps.folder') {
       isFolder = true;
     } else {
@@ -33,11 +31,8 @@ function getFolderContentsInfo(id) {
       itemObj = file;
     }
   } catch (e) {
-    // Nếu DriveApp.getFileById() ném lỗi, thì ID đó chắc chắn là Thư mục
     isFolder = true;
   }
-
-  // Bước 2: Xử lý theo từng nhánh đã phân loại
   if (isFile) {
     return { 
       success: true, 
@@ -85,16 +80,36 @@ function createTargetFolder(folderName, destParentId) {
 
 function copyFilesBatch(batch) {
   var results = [];
+  
   for (var i = 0; i < batch.length; i++) {
-    try {
-      var item = batch[i];
-      var file = DriveApp.getFileById(item.fileId);
-      var destFolder = item.targetFolderId ? DriveApp.getFolderById(item.targetFolderId) : DriveApp.getRootFolder();
-      file.makeCopy(file.getName(), destFolder);
-      results.push({ fileId: item.fileId, success: true });
-    } catch (e) {
-      results.push({ fileId: item.fileId, success: false, error: e.toString() });
+    var item = batch[i];
+    var success = false;
+    var errorMsg = "";
+
+    for (var attempt = 1; attempt <= 3; attempt++) {
+      try {
+        var file = DriveApp.getFileById(item.fileId);
+        var destFolder = item.targetFolderId ? DriveApp.getFolderById(item.targetFolderId) : DriveApp.getRootFolder();
+        
+        file.makeCopy(file.getName(), destFolder);
+        success = true;
+        break;
+        
+      } catch (e) {
+        errorMsg = e.toString();
+        Utilities.sleep(2000); 
+      }
     }
+
+    if (success) {
+      results.push({ fileId: item.fileId, success: true });
+    } else {
+      results.push({ fileId: item.fileId, success: false, error: errorMsg });
+    }
+    
+    // Tạo "nhịp thở" 0.5 giây giữa các tệp khác nhau để tránh spam request
+    Utilities.sleep(500); 
   }
+  
   return { success: true, results: results };
 }

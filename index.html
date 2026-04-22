@@ -276,7 +276,7 @@
   </div>
 
   <script>
-    const CHUNK_SIZE = 100;
+    const CHUNK_SIZE = 20;
     const STATE_KEY = 'driveCopierState';
     let copyState = null;
 
@@ -349,10 +349,6 @@
       if (text) {
         document.getElementById('statusText').innerText = text;
       }
-    }
-
-    function updateStats() {
-      // Đã loại bỏ các ô thống kê khỏi HTML nên hàm này không thực thi thao tác giao diện
     }
 
     function uiSetInProgress(inProgress) {
