@@ -39,12 +39,15 @@ function getFolderContentsInfo(id) {
       });
     }
     
-    return { success: true, files: fileList, folders: folderList, name: folder.getName() };
+    // Đánh dấu isFile: false vì đây là thư mục
+    return { success: true, isFile: false, files: fileList, folders: folderList, name: folder.getName() };
   } catch (e) {
     try {
       var singleFile = DriveApp.getFileById(id);
+      // Đánh dấu isFile: true để frontend dễ nhận diện
       return { 
         success: true, 
+        isFile: true,
         files: [{ id: singleFile.getId(), name: singleFile.getName() }], 
         folders: [], 
         name: singleFile.getName() 
@@ -57,12 +60,7 @@ function getFolderContentsInfo(id) {
 
 function createTargetFolder(folderName, destParentId) {
   try {
-    var parentFolder;
-    if (destParentId) {
-      parentFolder = DriveApp.getFolderById(destParentId);
-    } else {
-      parentFolder = DriveApp.getRootFolder();
-    }
+    var parentFolder = destParentId ? DriveApp.getFolderById(destParentId) : DriveApp.getRootFolder();
     var newFolder = parentFolder.createFolder(folderName);
     return { success: true, id: newFolder.getId() };
   } catch (e) {
@@ -76,7 +74,8 @@ function copyFilesBatch(batch) {
     try {
       var item = batch[i];
       var file = DriveApp.getFileById(item.fileId);
-      var destFolder = DriveApp.getFolderById(item.targetFolderId);
+      // Nếu targetFolderId bị trống (null), tự động copy thẳng ra My Drive
+      var destFolder = item.targetFolderId ? DriveApp.getFolderById(item.targetFolderId) : DriveApp.getRootFolder();
       file.makeCopy(file.getName(), destFolder);
       results.push({ fileId: item.fileId, success: true });
     } catch (e) {

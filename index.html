@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#111625">
-  <title>Copy Thư Mục Drive</title>
+  <title>Sao Chép Thư Mục Drive</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * {
@@ -223,7 +223,7 @@
           <div class="group">
             <label class="label-glass block mb-3 flex items-center">
               <span class="neon-glow-orange" style="color: #f06b18;">↓</span>
-              <span class="ml-2">Liên Kết Thư Mục Nguồn <span class="text-red-500">*</span></span>
+              <span class="ml-2">Liên Kết Nguồn <span class="text-red-500">*</span></span>
             </label>
             <input type="text" id="sourceUrl"
               class="input-field w-full px-5 py-3.5 rounded-xl text-slate-100 placeholder-slate-500 backdrop-blur"
@@ -418,7 +418,7 @@
       const destUrl = document.getElementById('destUrl').value.trim();
 
       if (!sourceUrl) {
-        alert("Vui lòng nhập Liên Kết Thư Mục Nguồn hợp lệ.");
+        alert("Vui lòng nhập Liên Kết Nguồn hợp lệ.");
         return;
       }
 
@@ -440,23 +440,14 @@
         let sourceInfo = await runServer('getFolderContentsInfo', sourceId);
         if (!sourceInfo.success) throw new Error(sourceInfo.error);
 
-        // Mẹo nhận diện tệp đơn lẻ: Không có folder con + Có đúng 1 file + Tên file trùng tên gốc
-        let isSingleFile = (sourceInfo.folders.length === 0 && sourceInfo.files.length === 1 && sourceInfo.name === sourceInfo.files[0].name);
-        
-        let rootTargetId;
+        let rootTargetId = destParentId; // Mặc định là null nếu không điền
 
-        if (isSingleFile && destParentId) {
-          // Bỏ qua tạo thư mục bọc ngoài nếu đã có thư mục đích
-          addLog(`Nhận diện liên kết TỆP: "${sourceInfo.name}". Bỏ qua tạo thư mục bọc ngoài...`, "info");
-          rootTargetId = destParentId;
+        // Xử lý nhánh tách biệt: Tệp vs Thư mục
+        if (sourceInfo.isFile) {
+          addLog(`Nhận diện TỆP: "${sourceInfo.name}". Đang chuẩn bị sao chép trực tiếp...`, "info");
+          // Giữ nguyên rootTargetId = destParentId. Backend sẽ tự động xử lý null thành My Drive.
         } else {
-          // Buộc phải tạo thư mục bọc ngoài nếu copy ra thẳng My Drive (do backend cần 1 ID cụ thể)
-          if (isSingleFile && !destParentId) {
-            addLog(`Nhận diện TỆP: "${sourceInfo.name}". Đang tạo thư mục bọc ngoài tại My Drive...`, "info");
-          } else {
-            addLog(`Tìm thấy THƯ MỤC: "${sourceInfo.name}". Đang tạo cấu trúc đích...`, "info");
-          }
-          
+          addLog(`Tìm thấy THƯ MỤC: "${sourceInfo.name}". Đang tạo cấu trúc đích...`, "info");
           let rootTarget = await runServer('createTargetFolder', sourceInfo.name, destParentId);
           if (!rootTarget.success) throw new Error(rootTarget.error);
           
