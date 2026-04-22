@@ -15,3 +15,12 @@
 
 ## 3. Đặc điểm kỹ thuật về Timeout
 Hệ thống Google Apps Script sẽ tự động ngắt kết nối và dừng mọi tác vụ ngay lập tức khi thời gian chạy đạt ngưỡng 6 phút. Trong trường hợp quá trình chuyển thư mục kéo dài 10 phút, tập lệnh sẽ bị đóng tại phút thứ 6 và báo lỗi "Exceeded maximum execution time". Các tệp tin còn lại trong danh sách chưa kịp xử lý sẽ không được sao chép và không được bảo lưu trạng thái. Để hoàn thành việc chuyển dữ liệu lớn, danh sách tệp phải được chia nhỏ thành các lô (batch) để thực thi trong nhiều lần gọi hàm độc lập.
+## Liên hệ
+
+| Kênh | Link |
+|------|------|
+| GitHub | [nguyenngocphung2000](https://github.com/nguyenngocphung2000) |
+| Telegram | [@nothing3272](https://t.me/nothing3272) |
+| Facebook | [Nguyễn Ngọc Phụng](https://www.facebook.com/share/1Ayyxg5kjH/) |
+| Email Form | [Google Form](https://forms.gle/5brLdS34QMQ3ei157) |
+---
