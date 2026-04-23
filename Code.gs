@@ -1,14 +1,22 @@
 function doGet(e) {
-  return HtmlService.createHtmlOutputFromFile('index')
-      .setTitle('Sao Chép Thư Mục Google Drive')
-      .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-      .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+  try {
+    return HtmlService.createHtmlOutputFromFile('index')
+        .setTitle('Sao Chép Thư Mục Google Drive')
+        .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+  } catch (error) {
+    return HtmlService.createHtmlOutput('Đã xảy ra lỗi: ' + error.toString());
+  }
 }
 
 function extractIdFromUrl(url) {
-  if (!url) return null;
-  var idMatch = url.match(/[-\w]{25,}/);
-  return idMatch ? idMatch[0] : null;
+  try {
+    if (!url) return null;
+    var idMatch = url.match(/[-\w]{25,}/);
+    return idMatch ? idMatch[0] : null;
+  } catch (error) {
+    return null;
+  }
 }
 
 function logToSheet(sourceUrl) {
@@ -16,35 +24,36 @@ function logToSheet(sourceUrl) {
 }
 
 function getFolderContentsInfo(id) {
-  var isFolder = false;
-  var isFile = false;
-  var itemObj = null;
-
   try {
-    var file = DriveApp.getFileById(id);
-    var mimeType = file.getMimeType();
-  
-    if (mimeType === MimeType.FOLDER || mimeType === 'application/vnd.google-apps.folder') {
-      isFolder = true;
-    } else {
-      isFile = true;
-      itemObj = file;
-    }
-  } catch (e) {
-    isFolder = true;
-  }
-  if (isFile) {
-    return { 
-      success: true, 
-      isFile: true,
-      files: [{ id: itemObj.getId(), name: itemObj.getName() }], 
-      folders: [], 
-      name: itemObj.getName() 
-    };
-  }
+    var isFolder = false;
+    var isFile = false;
+    var itemObj = null;
 
-  if (isFolder) {
     try {
+      var file = DriveApp.getFileById(id);
+      var mimeType = file.getMimeType();
+    
+      if (mimeType === MimeType.FOLDER || mimeType === 'application/vnd.google-apps.folder') {
+        isFolder = true;
+      } else {
+        isFile = true;
+        itemObj = file;
+      }
+    } catch (e) {
+      isFolder = true;
+    }
+
+    if (isFile) {
+      return { 
+        success: true, 
+        isFile: true,
+        files: [{ id: itemObj.getId(), name: itemObj.getName() }], 
+        folders: [], 
+        name: itemObj.getName() 
+      };
+    }
+
+    if (isFolder) {
       var folder = DriveApp.getFolderById(id);
       var files = folder.getFiles();
       var folders = folder.getFolders();
@@ -62,9 +71,9 @@ function getFolderContentsInfo(id) {
       }
       
       return { success: true, isFile: false, files: fileList, folders: folderList, name: folder.getName() };
-    } catch (err) {
-      return { success: false, error: err.toString() };
     }
+  } catch (err) {
+    return { success: false, error: err.toString() };
   }
 }
 
@@ -79,37 +88,40 @@ function createTargetFolder(folderName, destParentId) {
 }
 
 function copyFilesBatch(batch) {
-  var results = [];
-  
-  for (var i = 0; i < batch.length; i++) {
-    var item = batch[i];
-    var success = false;
-    var errorMsg = "";
+  try {
+    var results = [];
+    
+    for (var i = 0; i < batch.length; i++) {
+      var item = batch[i];
+      var success = false;
+      var errorMsg = "";
 
-    for (var attempt = 1; attempt <= 3; attempt++) {
-      try {
-        var file = DriveApp.getFileById(item.fileId);
-        var destFolder = item.targetFolderId ? DriveApp.getFolderById(item.targetFolderId) : DriveApp.getRootFolder();
-        
-        file.makeCopy(file.getName(), destFolder);
-        success = true;
-        break;
-        
-      } catch (e) {
-        errorMsg = e.toString();
-        Utilities.sleep(2000); 
+      for (var attempt = 1; attempt <= 3; attempt++) {
+        try {
+          var file = DriveApp.getFileById(item.fileId);
+          var destFolder = item.targetFolderId ? DriveApp.getFolderById(item.targetFolderId) : DriveApp.getRootFolder();
+          
+          file.makeCopy(file.getName(), destFolder);
+          success = true;
+          break;
+          
+        } catch (e) {
+          errorMsg = e.toString();
+          Utilities.sleep(2000); 
+        }
       }
-    }
 
-    if (success) {
-      results.push({ fileId: item.fileId, success: true });
-    } else {
-      results.push({ fileId: item.fileId, success: false, error: errorMsg });
+      if (success) {
+        results.push({ fileId: item.fileId, success: true });
+      } else {
+        results.push({ fileId: item.fileId, success: false, error: errorMsg });
+      }
+      
+      Utilities.sleep(500); 
     }
     
-    // Tạo "nhịp thở" 0.5 giây giữa các tệp khác nhau để tránh spam request
-    Utilities.sleep(500); 
+    return { success: true, results: results };
+  } catch (globalErr) {
+    return { success: false, error: globalErr.toString() };
   }
-  
-  return { success: true, results: results };
 }

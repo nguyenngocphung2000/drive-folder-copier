@@ -276,7 +276,7 @@
   </div>
 
   <script>
-    const CHUNK_SIZE = 20;
+    const CHUNK_SIZE = 10;
     const STATE_KEY = 'driveCopierState';
     let copyState = null;
 
@@ -531,7 +531,7 @@
         updateStats();
       }
 
-      updateProgress(100, "Hoàn thành Thành công!");
+      updateProgress(100, "Hoàn thành!");
       addLog(`Hoàn thành! Đã sao chép ${copyState.copiedFiles} tệp.`, "success");
       copyState.phase = 'done';
       clearState();
